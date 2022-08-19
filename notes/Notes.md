@@ -9,4 +9,4 @@ Memoria dinamica: Se reserva durante el tiempo de ejecucion.
 | Stack | Heap(Dinamica)|
 |-------|---------------|
 | |r| | free(  )| 
-| |-| | |
+| |--| | asd |
