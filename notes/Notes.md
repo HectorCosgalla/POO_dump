@@ -5,8 +5,3 @@ Estructura de datos: Es la definicion de un nuevo tipo de datos, que representa 
 Memoria estatica: Se reserva durante la compilacion.
 
 Memoria dinamica: Se reserva durante el tiempo de ejecucion.
-
-| Stack | Heap(Dinamica)|
-|-------|---------------|
-| |r| | free(  )| 
-| |--| | asd |
