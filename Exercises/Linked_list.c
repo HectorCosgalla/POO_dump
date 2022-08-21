@@ -25,24 +25,27 @@ struct Ticket{
 
 /********** Functions **********/
 void createTicket(struct Ticket**, char[], char[], bool, int[]);
+void deleteTicket();
 void printList(struct Ticket*);
 
 int main(int argc, char const *argv[]){
     struct Ticket* ticket_list = NULL;
 
-    createTicket(&ticket_list, "Hectorcito", "Cosgalla", true, (int[5]){22,8,22,12,33});
-    createTicket(&ticket_list, "Ana", "Cosgalla", true, (int[5]){23,8,22,9,12});
     createTicket(&ticket_list, "Hector", "Cosgalla", true, (int[5]){22,8,22,12,33});
-    createTicket(&ticket_list, "Anita", "Cosgalla", true, (int[5]){23,8,22,9,12});
+    createTicket(&ticket_list, "Edgar Antonio", "Cambranes", true, (int[5]){22,8,22,10,12});
+    createTicket(&ticket_list, "Eduardo", "Santoscoy Rivera", false, (int[5]){22,8,22,12,33});
+    createTicket(&ticket_list, "Juan Anselmo", "De la cruz", true, (int[5]){23,8,22,9,12});
+    createTicket(&ticket_list, "Ucan", "Moo May", false, (int[5]){22,8,22,12,33});
 
     printList(ticket_list);
 }
 
-void createTicket(struct Ticket** last_ticket, char first_name[], char last_name[], bool was_bought, int date[]){
+void createTicket(struct Ticket** ticket_list, char first_name[], char last_name[], bool was_bought, int date[]){
     
     struct Ticket* new_ticket = (struct Ticket*)malloc(sizeof(struct Ticket));
-    struct Ticket *last = *last_ticket;
+    struct Ticket *last_ticket = *ticket_list;
 
+    new_ticket->id = 1;
     strcpy(new_ticket->first_name, first_name);
     strcpy(new_ticket->last_name, last_name);
     new_ticket->was_bought = was_bought;
@@ -53,20 +56,18 @@ void createTicket(struct Ticket** last_ticket, char first_name[], char last_name
     new_ticket->ticket_date.minute = date[4];
     new_ticket->next_ticket = NULL;
 
-    if (!*last_ticket){
-        new_ticket->id = 1; 
-        *last_ticket = new_ticket;
+    if (!*ticket_list){ 
+        *ticket_list = new_ticket;
         return;
     }
 
-    int id = 2;
-    while (last->next_ticket != NULL){
-        last = last->next_ticket;
-        id += 1;
+    
+    while (last_ticket->next_ticket != NULL){
+        last_ticket = last_ticket->next_ticket;
     }
-
-    new_ticket->id = id;
-    last->next_ticket = new_ticket;
+    
+    new_ticket->id += last_ticket->id;
+    last_ticket->next_ticket = new_ticket;
     return;
 }
 
