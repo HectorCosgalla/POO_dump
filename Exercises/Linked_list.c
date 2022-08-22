@@ -27,20 +27,25 @@ struct Ticket{
 /********** Functions **********/
 void createTicket(struct Ticket**, char[], char[], bool, int[]);
 void consultTickets(struct Ticket*, int, ...);
+void deleteTicket(struct Ticket**, int);
 
 int main(int argc, char const *argv[]){
+    
     struct Ticket* ticket_list = NULL;
 
+    //Process of creating, deleting and reading
     createTicket(&ticket_list, "Hector", "Cosgalla", true, (int[5]){22,8,22,12,33});
     createTicket(&ticket_list, "Edgar Antonio", "Cambranes", true, (int[5]){22,8,22,10,12});
     createTicket(&ticket_list, "Eduardo", "Santoscoy Rivera", false, (int[5]){22,8,22,12,33});
     createTicket(&ticket_list, "Juan Anselmo", "De la cruz", true, (int[5]){23,8,22,9,12});
     createTicket(&ticket_list, "Ucan", "Moo May", false, (int[5]){22,8,22,12,33});
-
-    consultTickets(ticket_list, 3, 2);
-    consultTickets(ticket_list, 2);
-    printf("\n\n\n\n\n");
+    //consultTickets(ticket_list, 3, 2);
+    //consultTickets(ticket_list, 2);
+    deleteTicket(&ticket_list, 4);
+    deleteTicket(&ticket_list, 1);
+    createTicket(&ticket_list, "Itzel del carmen", "Moo Huchin", false, (int[5]){23,8,22,14,55});
     consultTickets(ticket_list, 1);
+
 }
 
 void createTicket(struct Ticket** ticket_list, char first_name[], char last_name[], bool was_bought, int date[]){
@@ -77,7 +82,7 @@ void createTicket(struct Ticket** ticket_list, char first_name[], char last_name
 void consultTickets(struct Ticket* ticket_list, int option, ...){
     if (option == 1){
         
-        while (ticket_list != NULL){
+        while (ticket_list){
             printf("ticket #%d \nfirst name: %s \nlast name: %s \nwas bought?: %s \ndate: %d/%d/%d %d:%d \n\n", ticket_list->id, ticket_list->first_name, ticket_list->last_name, ticket_list->was_bought?"yes":"no", ticket_list->ticket_date.day, ticket_list->ticket_date.month, ticket_list->ticket_date.year, ticket_list->ticket_date.hour, ticket_list->ticket_date.minute);
             ticket_list = ticket_list->next_ticket;
         }
@@ -86,7 +91,7 @@ void consultTickets(struct Ticket* ticket_list, int option, ...){
 
         int bought_tickets = 0;
         int gifted_tickets = 0;
-        while (ticket_list != NULL){
+        while (ticket_list){
             if (ticket_list->was_bought){
                 bought_tickets++;
             }else{
@@ -108,4 +113,28 @@ void consultTickets(struct Ticket* ticket_list, int option, ...){
     }else{
         printf("da fuq ya di bruh!?!?");
     }  
+}
+
+void deleteTicket(struct Ticket** ticket_list, int id){
+    struct Ticket *temporal_ticket = *ticket_list;
+    struct Ticket *previous_ticket = NULL;
+
+    if (temporal_ticket && temporal_ticket->id == id){
+        *ticket_list = temporal_ticket->next_ticket;
+        free(temporal_ticket);
+        return;
+    }
+    
+    while (temporal_ticket && temporal_ticket->id != id){
+        previous_ticket = temporal_ticket;
+        temporal_ticket = temporal_ticket->next_ticket;
+    }
+    
+    if (!temporal_ticket){
+        return;
+    }
+    
+    previous_ticket->next_ticket = temporal_ticket->next_ticket;
+
+    free(temporal_ticket);
 }
