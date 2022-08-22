@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <string.h>
 #include <stdarg.h>
 #define MAX_NAME 50
@@ -25,8 +26,7 @@ struct Ticket{
 
 /********** Functions **********/
 void createTicket(struct Ticket**, char[], char[], bool, int[]);
-void deleteTicket();
-void printList(struct Ticket*);
+void consultTickets(struct Ticket*, int, ...);
 
 int main(int argc, char const *argv[]){
     struct Ticket* ticket_list = NULL;
@@ -37,7 +37,10 @@ int main(int argc, char const *argv[]){
     createTicket(&ticket_list, "Juan Anselmo", "De la cruz", true, (int[5]){23,8,22,9,12});
     createTicket(&ticket_list, "Ucan", "Moo May", false, (int[5]){22,8,22,12,33});
 
-    printList(ticket_list);
+    consultTickets(ticket_list, 3, 2);
+    consultTickets(ticket_list, 2);
+    printf("\n\n\n\n\n");
+    consultTickets(ticket_list, 1);
 }
 
 void createTicket(struct Ticket** ticket_list, char first_name[], char last_name[], bool was_bought, int date[]){
@@ -71,10 +74,38 @@ void createTicket(struct Ticket** ticket_list, char first_name[], char last_name
     return;
 }
 
-void printList(struct Ticket *ticket){
-    while (ticket != NULL){
-        printf("ticket #%d \nfirst name: %s \nlast name: %s \nwas bought?: %s \ndate: %d/%d/%d %d:%d \n\n", ticket->id, ticket->first_name, ticket->last_name, ticket->was_bought?"yes":"no", ticket->ticket_date.day, ticket->ticket_date.month, ticket->ticket_date.year, ticket->ticket_date.hour, ticket->ticket_date.minute);
-        ticket = ticket->next_ticket;
-    }
-    
+void consultTickets(struct Ticket* ticket_list, int option, ...){
+    if (option == 1){
+        
+        while (ticket_list != NULL){
+            printf("ticket #%d \nfirst name: %s \nlast name: %s \nwas bought?: %s \ndate: %d/%d/%d %d:%d \n\n", ticket_list->id, ticket_list->first_name, ticket_list->last_name, ticket_list->was_bought?"yes":"no", ticket_list->ticket_date.day, ticket_list->ticket_date.month, ticket_list->ticket_date.year, ticket_list->ticket_date.hour, ticket_list->ticket_date.minute);
+            ticket_list = ticket_list->next_ticket;
+        }
+
+    }else if (option == 2){
+
+        int bought_tickets = 0;
+        int gifted_tickets = 0;
+        while (ticket_list != NULL){
+            if (ticket_list->was_bought){
+                bought_tickets++;
+            }else{
+                gifted_tickets++;
+            }
+            ticket_list = ticket_list->next_ticket;
+        }
+        printf("Bought tickets: %d \nGifted tickets: %d", bought_tickets, gifted_tickets);
+
+    }else if (option == 3)
+    {
+        va_list valist;
+        va_start(valist, option);
+        ++option;
+        while (ticket_list->id != option){
+            ticket_list = ticket_list->next_ticket;
+        }
+        printf("ticket #%d \nfirst name: %s \nlast name: %s \nwas bought?: %s \ndate: %d/%d/%d %d:%d \n\n", ticket_list->id, ticket_list->first_name, ticket_list->last_name, ticket_list->was_bought?"yes":"no", ticket_list->ticket_date.day, ticket_list->ticket_date.month, ticket_list->ticket_date.year, ticket_list->ticket_date.hour, ticket_list->ticket_date.minute);
+    }else{
+        printf("da fuq ya di bruh!?!?");
+    }  
 }
