@@ -13,3 +13,10 @@ hay un evento llamado After fest que esta ligado al workshop fest, este es una s
 -cuando se entregaron
 -a quien se entregaron
 -es bueno que tenga un folio 
+
+## Martes 23/08/22
+Estructura de una Lista ligada:
+`struct{
+    int dato;
+    struct nodo;
+}`

@@ -43,7 +43,7 @@ int main(int argc, char const *argv[]){
     //consultTickets(ticket_list, 2);
     deleteTicket(&ticket_list, 4);
     deleteTicket(&ticket_list, 1);
-    createTicket(&ticket_list, "Itzel del carmen", "Moo Huchin", false, (int[5]){23,8,22,14,55});
+    createTicket(&ticket_list, "Itzel del carmen", "Moo Cahuich", false, (int[5]){23,8,22,14,55});
     consultTickets(ticket_list, 1);
 
 }
