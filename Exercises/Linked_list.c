@@ -1,3 +1,5 @@
+//Code based on a geeekforgeeks.com page
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -45,7 +47,6 @@ int main(int argc, char const *argv[]){
     deleteTicket(&ticket_list, 1);
     createTicket(&ticket_list, "Itzel del carmen", "Moo Cahuich", false, (int[5]){23,8,22,14,55});
     consultTickets(ticket_list, 1);
-
 }
 
 void createTicket(struct Ticket** ticket_list, char first_name[], char last_name[], bool was_bought, int date[]){
