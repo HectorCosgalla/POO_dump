@@ -1,3 +1,5 @@
+//Code based on a geeekforgeeks.com page
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -47,24 +49,15 @@ int main(int argc, char const *argv[]){
     createTicket(&ticket_list, &amount_of_tickets, "Ucan", "Moo May", 0, (int[5]){22,8,22,12,33});
     //consultTickets(ticket_list, 3, 2);
     //consultTickets(ticket_list, 2);
-    deleteTicket(&ticket_list, &amount_of_tickets, "Hector");
-    deleteTicket(&ticket_list, &amount_of_tickets,"De la cruz");
-    createTicket(&ticket_list, &amount_of_tickets, "Itzel del carmen", "Moo Huchin", 0, (int[5]){23,8,22,14,55});
-    consultTickets(ticket_list, &amount_of_tickets, 1);
+    deleteTicket(&ticket_list, 4);
+    deleteTicket(&ticket_list, 1);
+    createTicket(&ticket_list, "Itzel del carmen", "Moo Huchin", false, (int[5]){23,8,22,14,55});
+    consultTickets(ticket_list, 1);
 
 }
 
-void createTicket(struct Ticket** ticket_list, struct Bought_and_Gifted_tickets* amount_of_tickets, char first_name[], char last_name[], int was_bought, int date[]){
-    if (amount_of_tickets->bought_tickets == 50 && was_bought){
-        printf("YA NO HAY BOLETOS PARA VENDER");
-        return;
-    }
-    if (amount_of_tickets->gifted_tickets == 100 && !was_bought)
-    {
-        printf("YA NO HAY BOLETOS PARA REGALAR");
-        return;
-    }
-
+void createTicket(struct Ticket** ticket_list, char first_name[], char last_name[], bool was_bought, int date[]){
+    
     struct Ticket* new_ticket = (struct Ticket*)malloc(sizeof(struct Ticket));
     struct Ticket *last_ticket = *ticket_list;
 
