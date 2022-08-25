@@ -60,10 +60,12 @@ void createTicket(struct Ticket** ticket_list, struct Bought_and_Gifted_tickets*
     if (amount_tickets->bought_tickets == 50 && was_bought)
     {
         printf("NO HAY BOLETOS PARA VENDER");
+        return;
     }
     else if (amount_tickets->gifted_tickets == 100 && !was_bought)
     {
         printf("NO HAY BOLETOS PARA REGALAR");
+        return;
     }
 
 
