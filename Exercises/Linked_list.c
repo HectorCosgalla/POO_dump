@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <stdarg.h>
 #include <string.h>
 #include <stdarg.h>
@@ -16,44 +15,59 @@ struct Date{
 };
 
 struct Ticket{
-    int id;
     char first_name[MAX_NAME];
     char last_name[MAX_NAME];
+    int was_bought;
     struct Date ticket_date;
-    bool was_bought;
     struct Ticket* next_ticket;
 };
 
+struct Bought_and_Gifted_tickets{
+    int bought_tickets;
+    int gifted_tickets;
+};
+
 /********** Functions **********/
-void createTicket(struct Ticket**, char[], char[], bool, int[]);
-void consultTickets(struct Ticket*, int, ...);
-void deleteTicket(struct Ticket**, int);
+void createTicket(struct Ticket**, struct Bought_and_Gifted_tickets*, char[], char[], int, int[]);
+void consultTickets(struct Ticket*, struct Bought_and_Gifted_tickets*, int);
+void deleteTicket(struct Ticket**, struct Bought_and_Gifted_tickets*, char[]);
 
 int main(int argc, char const *argv[]){
     
     struct Ticket* ticket_list = NULL;
+    struct Bought_and_Gifted_tickets amount_of_tickets;
+    amount_of_tickets.bought_tickets = 0;
+    amount_of_tickets.gifted_tickets = 0;
 
     //Process of creating, deleting and reading
-    createTicket(&ticket_list, "Hector", "Cosgalla", true, (int[5]){22,8,22,12,33});
-    createTicket(&ticket_list, "Edgar Antonio", "Cambranes", true, (int[5]){22,8,22,10,12});
-    createTicket(&ticket_list, "Eduardo", "Santoscoy Rivera", false, (int[5]){22,8,22,12,33});
-    createTicket(&ticket_list, "Juan Anselmo", "De la cruz", true, (int[5]){23,8,22,9,12});
-    createTicket(&ticket_list, "Ucan", "Moo May", false, (int[5]){22,8,22,12,33});
+    createTicket(&ticket_list, &amount_of_tickets, "Hector", "Cosgalla", 1, (int[5]){22,8,22,12,33});
+    createTicket(&ticket_list, &amount_of_tickets, "Edgar Antonio", "Cambranes", 1, (int[5]){22,8,22,10,12});
+    createTicket(&ticket_list, &amount_of_tickets, "Eduardo", "Santoscoy Rivera", 0, (int[5]){22,8,22,12,33});
+    createTicket(&ticket_list, &amount_of_tickets, "Juan Anselmo", "De la cruz", 1, (int[5]){23,8,22,9,12});
+    createTicket(&ticket_list, &amount_of_tickets, "Ucan", "Moo May", 0, (int[5]){22,8,22,12,33});
     //consultTickets(ticket_list, 3, 2);
     //consultTickets(ticket_list, 2);
-    deleteTicket(&ticket_list, 4);
-    deleteTicket(&ticket_list, 1);
-    createTicket(&ticket_list, "Itzel del carmen", "Moo Huchin", false, (int[5]){23,8,22,14,55});
-    consultTickets(ticket_list, 1);
+    deleteTicket(&ticket_list, &amount_of_tickets, "Hector");
+    deleteTicket(&ticket_list, &amount_of_tickets,"De la cruz");
+    createTicket(&ticket_list, &amount_of_tickets, "Itzel del carmen", "Moo Huchin", 0, (int[5]){23,8,22,14,55});
+    consultTickets(ticket_list, &amount_of_tickets, 1);
 
 }
 
-void createTicket(struct Ticket** ticket_list, char first_name[], char last_name[], bool was_bought, int date[]){
-    
+void createTicket(struct Ticket** ticket_list, struct Bought_and_Gifted_tickets* amount_of_tickets, char first_name[], char last_name[], int was_bought, int date[]){
+    if (amount_of_tickets->bought_tickets == 50 && was_bought){
+        printf("YA NO HAY BOLETOS PARA VENDER");
+        return;
+    }
+    if (amount_of_tickets->gifted_tickets == 100 && !was_bought)
+    {
+        printf("YA NO HAY BOLETOS PARA REGALAR");
+        return;
+    }
+
     struct Ticket* new_ticket = (struct Ticket*)malloc(sizeof(struct Ticket));
     struct Ticket *last_ticket = *ticket_list;
 
-    new_ticket->id = 1;
     strcpy(new_ticket->first_name, first_name);
     strcpy(new_ticket->last_name, last_name);
     new_ticket->was_bought = was_bought;
@@ -63,73 +77,65 @@ void createTicket(struct Ticket** ticket_list, char first_name[], char last_name
     new_ticket->ticket_date.hour = date[3];
     new_ticket->ticket_date.minute = date[4];
     new_ticket->next_ticket = NULL;
-
-    if (!*ticket_list){ 
+    
+    if (was_bought == 1){
+        amount_of_tickets->bought_tickets++;
+    } else{
+        amount_of_tickets->gifted_tickets++;
+    }
+    
+    if (!*ticket_list){
         *ticket_list = new_ticket;
         return;
     }
-
     
+
     while (last_ticket->next_ticket != NULL){
         last_ticket = last_ticket->next_ticket;
     }
     
-    new_ticket->id += last_ticket->id;
     last_ticket->next_ticket = new_ticket;
     return;
 }
 
-void consultTickets(struct Ticket* ticket_list, int option, ...){
+void consultTickets(struct Ticket* ticket_list, struct Bought_and_Gifted_tickets* amount_tickets, int option){
     if (option == 1){
-        
         while (ticket_list){
-            printf("ticket #%d \nfirst name: %s \nlast name: %s \nwas bought?: %s \ndate: %d/%d/%d %d:%d \n\n", ticket_list->id, ticket_list->first_name, ticket_list->last_name, ticket_list->was_bought?"yes":"no", ticket_list->ticket_date.day, ticket_list->ticket_date.month, ticket_list->ticket_date.year, ticket_list->ticket_date.hour, ticket_list->ticket_date.minute);
+            printf("first name: %s \nlast name: %s \ndate: %d/%d/%d %d:%d \n\n", ticket_list->first_name, ticket_list->last_name, ticket_list->ticket_date.day, ticket_list->ticket_date.month, ticket_list->ticket_date.year, ticket_list->ticket_date.hour, ticket_list->ticket_date.minute);
             ticket_list = ticket_list->next_ticket;
         }
+        printf("total bought: %d\n", amount_tickets->bought_tickets);
+        printf("total gifted: %d", amount_tickets->gifted_tickets);
 
-    }else if (option == 2){
-
-        int bought_tickets = 0;
-        int gifted_tickets = 0;
-        while (ticket_list){
-            if (ticket_list->was_bought){
-                bought_tickets++;
-            }else{
-                gifted_tickets++;
-            }
-            ticket_list = ticket_list->next_ticket;
-        }
-        printf("Bought tickets: %d \nGifted tickets: %d", bought_tickets, gifted_tickets);
-
-    }else if (option == 3)
-    {
-        va_list valist;
-        va_start(valist, option);
-        ++option;
-        while (ticket_list->id != option){
-            ticket_list = ticket_list->next_ticket;
-        }
-        printf("ticket #%d \nfirst name: %s \nlast name: %s \nwas bought?: %s \ndate: %d/%d/%d %d:%d \n\n", ticket_list->id, ticket_list->first_name, ticket_list->last_name, ticket_list->was_bought?"yes":"no", ticket_list->ticket_date.day, ticket_list->ticket_date.month, ticket_list->ticket_date.year, ticket_list->ticket_date.hour, ticket_list->ticket_date.minute);
-    }else{
-        printf("da fuq ya di bruh!?!?");
-    }  
+    } 
 }
 
-void deleteTicket(struct Ticket** ticket_list, int id){
+void deleteTicket(struct Ticket** ticket_list, struct Bought_and_Gifted_tickets* amount_tickets,char search_term[]){
     struct Ticket *temporal_ticket = *ticket_list;
     struct Ticket *previous_ticket = NULL;
 
-    if (temporal_ticket && temporal_ticket->id == id){
+    if (temporal_ticket && (!strcmp(temporal_ticket->first_name,search_term) || !strcmp(temporal_ticket->last_name,search_term))){
         *ticket_list = temporal_ticket->next_ticket;
+        if (temporal_ticket->was_bought){
+            amount_tickets->bought_tickets--;
+        } else{
+            amount_tickets->gifted_tickets--;
+        }
         free(temporal_ticket);
         return;
     }
     
-    while (temporal_ticket && temporal_ticket->id != id){
+    while (temporal_ticket && strcmp(temporal_ticket->first_name,search_term) && strcmp(temporal_ticket->last_name,search_term)) {
         previous_ticket = temporal_ticket;
         temporal_ticket = temporal_ticket->next_ticket;
     }
-    
+
+    if (temporal_ticket->was_bought){
+        amount_tickets->bought_tickets--;
+    } else{
+        amount_tickets->gifted_tickets--;
+    }
+
     if (!temporal_ticket){
         return;
     }
