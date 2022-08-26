@@ -30,6 +30,7 @@ struct Bought_and_Gifted_tickets{
 };
 
 /********** Functions **********/
+void deleteATicketFromTheScoreboard(int, struct Bought_and_Gifted_tickets*);
 void createTicket(struct Ticket**, struct Bought_and_Gifted_tickets*, char[], char[], int, int[]);
 void consultTickets(struct Ticket*, struct Bought_and_Gifted_tickets*, int);
 void deleteTicket(struct Ticket**, struct Bought_and_Gifted_tickets*, char[]);
@@ -57,48 +58,37 @@ int main(int argc, char const *argv[]){
 }
 
 void createTicket(struct Ticket** ticket_list, struct Bought_and_Gifted_tickets* amount_tickets, char first_name[], char last_name[], int was_bought, int date[]){
-    if (amount_tickets->bought_tickets == 50 && was_bought)
+    if (amount_tickets->bought_tickets == 50 || amount_tickets->gifted_tickets == 100)
     {
-        printf("NO HAY BOLETOS PARA VENDER");
-        return;
-    }
-    else if (amount_tickets->gifted_tickets == 100 && !was_bought)
-    {
-        printf("NO HAY BOLETOS PARA REGALAR");
-        return;
-    }
+        printf("NO HAY BOLETOS DISPONIBLES");
+    }else{
+        struct Ticket* new_ticket = (struct Ticket*)malloc(sizeof(struct Ticket));
+        struct Ticket *last_ticket = *ticket_list;
 
-
-    struct Ticket* new_ticket = (struct Ticket*)malloc(sizeof(struct Ticket));
-    struct Ticket *last_ticket = *ticket_list;
-
-    strcpy(new_ticket->first_name, first_name);
-    strcpy(new_ticket->last_name, last_name);
-    new_ticket->was_bought = was_bought;
-    new_ticket->ticket_date.day = date[0];
-    new_ticket->ticket_date.month = date[1];
-    new_ticket->ticket_date.year = date[2];
-    new_ticket->ticket_date.hour = date[3];
-    new_ticket->ticket_date.minute = date[4];
-    new_ticket->next_ticket = NULL;
-    
-    if (was_bought == 1){
-        amount_tickets->bought_tickets++;
-    } else{
-        amount_tickets->gifted_tickets++;
+        strcpy(new_ticket->first_name, first_name);
+        strcpy(new_ticket->last_name, last_name);
+        new_ticket->was_bought = was_bought;
+        new_ticket->ticket_date.day = date[0];
+        new_ticket->ticket_date.month = date[1];
+        new_ticket->ticket_date.year = date[2];
+        new_ticket->ticket_date.hour = date[3];
+        new_ticket->ticket_date.minute = date[4];
+        new_ticket->next_ticket = NULL;
+        
+        if (!*ticket_list){
+            *ticket_list = new_ticket;
+        }else{
+            while (last_ticket->next_ticket != NULL){
+                last_ticket = last_ticket->next_ticket;
+            }
+            last_ticket->next_ticket = new_ticket;
+        }
+        if (was_bought == 1){
+            amount_tickets->bought_tickets++;
+        } else{
+            amount_tickets->gifted_tickets++;
+        }
     }
-    
-    if (!*ticket_list){
-        *ticket_list = new_ticket;
-        return;
-    }
-    
-
-    while (last_ticket->next_ticket != NULL){
-        last_ticket = last_ticket->next_ticket;
-    }
-    
-    last_ticket->next_ticket = new_ticket;
     return;
 }
 
@@ -120,31 +110,29 @@ void deleteTicket(struct Ticket** ticket_list, struct Bought_and_Gifted_tickets*
 
     if (temporal_ticket && (!strcmp(temporal_ticket->first_name,search_term) || !strcmp(temporal_ticket->last_name,search_term))){
         *ticket_list = temporal_ticket->next_ticket;
-        if (temporal_ticket->was_bought){
-            amount_tickets->bought_tickets--;
-        } else{
-            amount_tickets->gifted_tickets--;
-        }
+        deleteATicketFromTheScoreboard(temporal_ticket->was_bought, amount_tickets);
         free(temporal_ticket);
-        return;
-    }
-    
-    while (temporal_ticket && strcmp(temporal_ticket->first_name,search_term) && strcmp(temporal_ticket->last_name,search_term)) {
-        previous_ticket = temporal_ticket;
-        temporal_ticket = temporal_ticket->next_ticket;
-    }
+    }else{
+        while (temporal_ticket && strcmp(temporal_ticket->first_name,search_term) && strcmp(temporal_ticket->last_name,search_term)) {
+            previous_ticket = temporal_ticket;
+            temporal_ticket = temporal_ticket->next_ticket;
+        }
 
-    if (temporal_ticket->was_bought){
-        amount_tickets->bought_tickets--;
+        deleteATicketFromTheScoreboard(temporal_ticket->was_bought, amount_tickets);
+
+        if (temporal_ticket){
+            previous_ticket->next_ticket = temporal_ticket->next_ticket;
+            free(temporal_ticket);
+        }
+    }
+    return;
+}
+
+void deleteATicketFromTheScoreboard(int was_bought, struct Bought_and_Gifted_tickets* scoreboard){
+    if (was_bought){
+        scoreboard->bought_tickets--;
     } else{
-        amount_tickets->gifted_tickets--;
+        scoreboard->gifted_tickets--;
     }
-
-    if (!temporal_ticket){
-        return;
-    }
-    
-    previous_ticket->next_ticket = temporal_ticket->next_ticket;
-
-    free(temporal_ticket);
+    return;
 }
