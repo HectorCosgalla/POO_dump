@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdarg.h>
 #define MAX_NAME 50
+#define MAX_GIFTED 100
+#define MAX_BOUGHT 50
 
 /********** Structures **********/
 struct Date{
@@ -58,7 +60,7 @@ int main(int argc, char const *argv[]){
 }
 
 void createTicket(struct Ticket** ticket_list, struct Bought_and_Gifted_tickets* amount_tickets, char first_name[], char last_name[], int was_bought, int date[]){
-    if (amount_tickets->bought_tickets == 50 || amount_tickets->gifted_tickets == 100)
+    if (amount_tickets->bought_tickets == MAX_BOUGHT || amount_tickets->gifted_tickets == MAX_GIFTED)
     {
         printf("NO HAY BOLETOS DISPONIBLES");
     }else{
