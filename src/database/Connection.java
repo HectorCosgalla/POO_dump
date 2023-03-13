@@ -6,7 +6,9 @@ import java.util.Properties;
 
 public class Connection {
     
-    public static java.sql.Connection getConnection(String userName, String password, String dbms, String serverName, String portNumber, String dbName) throws SQLException {
+    public static java.sql.Connection getConnection(String data) throws SQLException {
+        String[] stringOfData = data.split(",");
+        String userName = stringOfData[0], password= stringOfData[1], dbms= stringOfData[2], serverName= stringOfData[3], portNumber= stringOfData[4], dbName= stringOfData[5];
         java.sql.Connection conn = null;
         Properties connectionProps = new Properties();
         connectionProps.put("user", userName);

@@ -1,0 +1,6 @@
+username: v498681:67`wbmdpt:9`Uftu
+password: :?uVv+tyZAX
+dbms: nztrm
+server: 56/243/268/265
+port: 4417
+databaseName: v498681:67`Uftu`dpoofdu
